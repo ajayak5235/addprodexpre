@@ -1,36 +1,38 @@
 
 const express = require('express');
-const bodyParser = require('body-parser');
+const bodyPrser = require('body-parser');
+
 
 const app = express();
+ app.use(bodyPrser.urlencoded({extended: false}))
 
-app.use(bodyParser.urlencoded({ extended: false }));
 
-app.get('/', (req, res) => {
-    res.send('Welcome to the home page.');
+
+app.use('/add-product', (req, res, next) => {
+   res.send(`
+   <form action="/product" method="POST">
+       <input type="text" name="productName" placeholder="Product Name">
+       <input type="text" name="productSize" placeholder="Product Size">
+     
+       <button type="submit">Add Product</button>
+   </form>
+`)
 });
 
-app.get('/add-product', (req, res) => {
-    res.send(`
-        <form action="/add-product" method="POST">
-            <input type="text" name="productName" placeholder="Product Name">
-            <input type="text" name="productSize" placeholder="Product Size">
-            <button type="submit">Add Product</button>
-        </form>
-    `);
+app.use('/product', (req, res, next) => {
+    console.log(req.body);
+    res.redirect('/success')
+});
+app.use('/success', (req, res, next) => {
+    
+    res.send('<h1>Added successefully</h1>')
 });
 
-app.post('/add-product', (req, res) => {
-    const productName = req.body.productName;
-    const productSize = req.body.productSize;
-
-    console.log('Product Name:', productName);
-    console.log('Product Size:', productSize);
-
-    res.send('Product added successfully.');
+app.use('/', (req, res, next) => {
+   
+    res.send('<h1>Hello from Express</h1>')
 });
 
-app.listen(3000, () => {
-    console.log('Server is running on port 3000');
-});
+app.listen(3000);
+
 
